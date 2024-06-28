@@ -1,0 +1,110 @@
+<%- include('../partials/header.ejs') %>
+    <div class="grid lg:grid-cols-2 min-h-[100dvh]">
+        <div class="flex items-center justify-center p-6 lg:p-12">
+            <div class="mx-auto w-full max-w-md space-y-6">
+                <div class="space-y-2 text-center">
+                    <h1 class="text-3xl font-bold">TEMP SignUp Page</h1>
+                    <p class="text-muted-foreground">Enter your email and password to sign up</p>
+                </div>
+                <form method="post" class="space-y-4">
+
+                    <div class="space-y-2">
+                        <label
+                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            for="name">
+                            Name
+                        </label>
+                        <input
+                            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            type="name" id="name" name="name" placeholder="Your name" required="" />
+                    </div>
+
+
+                    <div class="space-y-2">
+                        <label
+                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            for="email">
+                            Email
+                        </label>
+                        <input
+                            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            type="email" id="email" name="email" placeholder="tm1@example.com" required="" />
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <label
+                                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                for="password">
+                                Password
+                            </label>
+                            <a class="text-sm font-medium underline underline-offset-4 hover:text-primary" href="#">
+                                Forgot password?
+                            </a>
+                        </div>
+                        <input
+                            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            type="password" id="password" name="password" required="" />
+                    </div>
+                    <div class="space-y-2">
+                        <label class="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm"
+                            for="role">
+                            Role
+                        </label>
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-2">
+                                <input type="radio" id="team-member" class="peer sr-only" name="role"
+                                    value="TEAM_MEMBER" required />
+                                <label for="team-member"
+                                    class="border cursor-pointer rounded-md p-2 flex items-center gap-2 [&amp;:has(:checked)]:bg-muted peer-checked:border-black peer-checked:ring-primary">
+                                    Team Member
+                                </label>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="radio" id="project-manager" class="peer sr-only" name="role"
+                                    value="PROJECT_MANAGER" required />
+                                <label for="project-manager"
+                                    class="border cursor-pointer rounded-md p-2 flex items-center gap-2 bg-muted peer-checked:border-black peer-checked:ring-primary">
+                                    Project Manager
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+
+                    <% if (typeof error_message !=='undefined' && error_message.length> 0 ) { %>
+
+                        <!-- alert box -->
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+                            role="alert">
+                            <span class="block sm:inline">
+                                <%= error_message %>
+                            </span>
+                            <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                                <!-- <svg class="fill-current h-6 w-6 text-red-500" role="button" -->
+                                <!-- xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"> -->
+                                <!-- <title>Close</title> -->
+                                <!-- <path
+                                        d="M14.348 5.652a.5.5 0 0 1 0 .707L10.707 10l3.64 3.64a.5.5 0 0 1-.708.708L10 10.707l-3.64 3.64a.5.5 0 0 1-.708-.708L9.293 10 5.652 6.36a.5.5 0 0 1 .708-.708L10 9.293l3.64-3.64a.5.5 0 0 1 .708 0z" /> -->
+                                <!-- </svg> -->
+                            </span>
+                        </div>
+
+                        <% } %>
+
+                            <button
+                                class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
+                                type="submit">
+                                Sign Up
+                            </button>
+                </form>
+            </div>
+        </div>
+        <div class="hidden lg:block">
+            <img src="/home_left_bg.png" alt="City Skyline" width="1920" height="1080"
+                class="h-full w-full object-cover" style="aspect-ratio:1920/1080;object-fit:cover" />
+        </div>
+    </div>
+    <%- include('../partials/footer.ejs') %>

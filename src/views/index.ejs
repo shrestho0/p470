@@ -1,0 +1,25 @@
+<%- include('partials/header') %>
+
+    <div class="  p-8 m-8">
+
+
+        <div class="flex flex-col bg-gray-200 p-8 rounded-xl text-2xl">
+            <div class="text-xl">
+                <h1>This page will be redirected to</h1>
+                <ul>
+                    <li>- Auth page for not auth users</li>
+                    <li>- Corresponding dashboard for auth users</li>
+                </ul>
+            </div>
+
+            <div>
+                Login: <a class="font-medium text-blue-400" href="/signin">Login</a>
+            </div>
+            <div>
+
+                Signup: <a class="font-medium text-blue-400" href="/signup">Signup</a>
+            </div>
+        </div>
+
+    </div>
+    <%- include('partials/footer') %>
