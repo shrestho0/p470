@@ -1,21 +1,18 @@
 import express from "express";
 import { BaseController } from "../controllers/BaseController";
+import { authRouter } from "./AuthRouter";
+import { protectedRoleRouter } from "./ProtectedRoleRouter";
 
 const baseRouter = express.Router();
 const baseController = BaseController.getInstance();
 
 // Routes 
-baseRouter.get('', baseController.index)
-baseRouter.use('/signin', baseController.signin)
+baseRouter.get('/', baseController.index)
+baseRouter.get('/dashboard', baseController.dashboard)
 
-baseRouter.use('/signup', baseController.signup)
+baseRouter.use('', authRouter)
+baseRouter.use('', protectedRoleRouter)
 
-
-// temp
-baseRouter.get('/redirect', (req, res) => res.render('misc/redirect', {
-    message: 'Redirect Page',
-    redirectUrl: '/signup'
-}))
 
 export { baseRouter };
 

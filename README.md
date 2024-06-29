@@ -38,6 +38,29 @@ Populate Dummy Data
 node prisma/seed.js
 ```
 
+If populated properly, you will get these users
+
+```
+[[ADMIN]]
+email: admin@example.com
+
+[[PROJECT MANAGER]]
+email: pm01@example.com
+email: pm02@example.com
+
+[[TEAM MEMBER]]
+email: tm01@example.com
+email: tm02@example.com
+email: tm03@example.com
+email: tm04@example.com
+email: tm05@example.com
+
+TODO: Other dummy data will be added later. 
+Modify dummy data from `./src/prisma/seed.js`
+
+```
+
+
 Run the project
 ```
 npm run dev # watch mode

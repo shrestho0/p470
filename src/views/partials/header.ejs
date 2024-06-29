@@ -5,11 +5,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="/app.css">
     <title>
         <%= typeof title !=='undefined' ? title : "Default Title" %>
     </title>
 </head>
+<div>
 
+    <div id="flash_message_area" class="bg-primary  w-full text-primary-foreground py-2 text-center"
+        style="display: none;">
+
+    </div>
+</div>
+
+<pre class="bg-gray-200 m-4 p-4">
+// Debug Data
+<%= typeof user !=='undefined' ? JSON.stringify( user, null, 2) : "No User" %>
+</pre>
+
+<script>
+    function parseCookies() {
+        // Split the document.cookie string by '; ' to get each cookie as a separate string
+        const cookieArray = document.cookie.split('; ');
+        // Create an empty object to store the cookies
+        const cookies = {};
+
+        // Iterate over each cookie string
+        cookieArray.forEach(cookie => {
+            // Split the cookie string by '=' to get the name and value
+            const [name, value] = cookie.split('=');
+            // Decode the name and value and add them to the cookies object
+            cookies[decodeURIComponent(name)] = decodeURIComponent(value);
+        });
+
+        // Return the cookies object
+        return cookies;
+    }
+    // get flash_message_area from DOM
+    const flash_message_area = document.getElementById('flash_message_area');
+
+    const parsedCookies = parseCookies();
+    const flash_message = parsedCookies['_flash_message_'];
+
+
+    // parse _flash_message_ from cookie
+
+
+
+    // if flash_message is not empty, show it
+    if (flash_message) {
+        flash_message_area.innerText = flash_message;
+        flash_message_area.style.display = 'block';
+    }
+
+    window.onbeforeunload = function () {
+        // delete _flash_message_ cookie
+        document.cookie = '_flash_message_=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    }
+
+</script>
 
 <body>
