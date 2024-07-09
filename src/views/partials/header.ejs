@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/app.css">
+    <link rel="stylesheet" href="https://unpkg.com/carbon-components@10.58.12/css/carbon-components.min.css">
     <title>
         <%= typeof title !=='undefined' ? title : "Default Title" %>
     </title>
@@ -18,51 +19,60 @@
     </div>
 </div>
 
-<pre class="bg-gray-200 m-4 p-4">
-// Debug Data
-<%= typeof user !=='undefined' ? JSON.stringify( user, null, 2) : "No User" %>
-</pre>
 
-<script>
-    function parseCookies() {
-        // Split the document.cookie string by '; ' to get each cookie as a separate string
-        const cookieArray = document.cookie.split('; ');
-        // Create an empty object to store the cookies
-        const cookies = {};
+<% if (typeof user !=='undefined' ) { %>
+    <%- include('./navbar.ejs') %>
+        <% } %>
 
-        // Iterate over each cookie string
-        cookieArray.forEach(cookie => {
-            // Split the cookie string by '=' to get the name and value
-            const [name, value] = cookie.split('=');
-            // Decode the name and value and add them to the cookies object
-            cookies[decodeURIComponent(name)] = decodeURIComponent(value);
-        });
+            <script>
+                function parseCookies() {
+                    // Split the document.cookie string by '; ' to get each cookie as a separate string
+                    const cookieArray = document.cookie.split('; ');
+                    // Create an empty object to store the cookies
+                    const cookies = {};
 
-        // Return the cookies object
-        return cookies;
-    }
-    // get flash_message_area from DOM
-    const flash_message_area = document.getElementById('flash_message_area');
+                    // Iterate over each cookie string
+                    cookieArray.forEach(cookie => {
+                        // Split the cookie string by '=' to get the name and value
+                        const [name, value] = cookie.split('=');
+                        // Decode the name and value and add them to the cookies object
+                        cookies[decodeURIComponent(name)] = decodeURIComponent(value);
+                    });
 
-    const parsedCookies = parseCookies();
-    const flash_message = parsedCookies['_flash_message_'];
+                    // Return the cookies object
+                    return cookies;
+                }
+                // get flash_message_area from DOM
+                const flash_message_area = document.getElementById('flash_message_area');
 
-
-    // parse _flash_message_ from cookie
+                const parsedCookies = parseCookies();
+                const flash_message = parsedCookies['_flash_message_'];
 
 
+                // parse _flash_message_ from cookie
 
-    // if flash_message is not empty, show it
-    if (flash_message) {
-        flash_message_area.innerText = flash_message;
-        flash_message_area.style.display = 'block';
-    }
 
-    window.onbeforeunload = function () {
-        // delete _flash_message_ cookie
-        document.cookie = '_flash_message_=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-    }
 
-</script>
+                // if flash_message is not empty, show it
+                if (flash_message) {
+                    flash_message_area.innerText = flash_message;
+                    flash_message_area.style.display = 'block';
+                }
 
-<body>
+                window.onbeforeunload = function () {
+                    // delete _flash_message_ cookie
+                    document.cookie = '_flash_message_=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                }
+
+            </script>
+
+
+
+            <body class="  ">
+                <main class="container mx-auto  py-4">
+
+
+                    <!-- <pre class="bg-gray-200 m-4 p-4">
+                    // Debug Data
+                    <%= typeof user !=='undefined' ? JSON.stringify( user, null, 2) : "No User" %>
+                    </pre> -->

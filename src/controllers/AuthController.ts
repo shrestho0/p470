@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { AuthService } from "../services/AuthServices";
+import { AuthService } from "../services/AuthService";
 import { sanitizedGotoUrl } from "../utils/utils";
 
 export class AuthController {

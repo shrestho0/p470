@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AuthService } from "../services/AuthServices";
+import { AuthService } from "../services/AuthService";
 import { Prisma } from "@prisma/client";
 import { customResponse } from "../utils/custom-response";
 

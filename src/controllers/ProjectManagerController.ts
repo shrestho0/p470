@@ -16,6 +16,10 @@ export class ProjectManagerController {
     }
 
 
+    createProject(req: Request, res: Response) {
+        // Create Project
+        return customResponse({ req, res, view: 'project_manager/create_project', data: { title: 'Create Project' } })
+    }
 
 
 
