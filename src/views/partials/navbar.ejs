@@ -1,0 +1,230 @@
+<!-- <div id="flash_message_area" class="bg-primary  w-full text-primary-foreground py-2 text-center" style="display: block;">Logged in successfully.</div> -->
+
+<!-- 
+    Pages for authenticated users will be served from here manipulting the DOM
+-->
+
+
+<header class="bg-[#161616] text-white py-4 h-20 ">
+    <div class="container mx-auto flex items-center justify-between">
+        <a class="flex items-center gap-2" href="#">
+            <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+            <path d="m8 3 4 8 5-5 5 15H2L8 3z"></path>
+        </svg> -->
+            <span class="text-lg font-semibold">Project Management Tool</span>
+        </a>
+        <nav class="flex items-center gap-6 justify-center flex-1 w-full  pr-16">
+            <ul class="flex select-none" id="navUl">
+
+            </ul>
+
+        </nav>
+
+        <div class="flex items-center gap-4">
+
+
+
+
+            <!-- old -->
+            <details class="details ">
+                <summary class="bx--header__action flex items-center justify-center">
+                    <!-- <div class="w-6 h-6  flex items-center justify-between"> -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                        <circle cx="18" cy="15" r="3" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M10 15H6a4 4 0 0 0-4 4v2" />
+                        <path d="m21.7 16.4-.9-.3" />
+                        <path d="m15.2 13.9-.9-.3" />
+                        <path d="m16.6 18.7.3-.9" />
+                        <path d="m19.1 12.2.3-.9" />
+                        <path d="m19.6 18.7-.4-1" />
+                        <path d="m16.8 12.3-.4-1" />
+                        <path d="m14.3 16.6 1-.4" />
+                        <path d="m20.7 13.8 1-.4" />
+                    </svg>
+                    <!-- </div> -->
+                </summary>
+                <div class="bx--header-panel bx--header-panel--expanded top-20 p-2 " style="">
+                    <div
+                        class="flex flex-col gap-3 absolute text-white px-4 py-6 select-none my-4  min-w-48  mr-4 right-0  ">
+                        <span>
+                            Welcome, <span class="font-semibold">
+                                <%= user.name %>
+                            </span>
+                        </span>
+                        <span>
+                            Role: <span id="userRole" class="font-semibold">
+                                <%= user.role %>
+                            </span>
+                        </span>
+
+                        <a class="block hover:underline" href="/profile">Profile</a>
+                        <a tabindex="0" class="bx--btn bx--btn--secondary" href="/signout"> Sign Out </a>
+                    </div>
+                </div>
+                <!-- <div
+                    class="bg-black flex flex-col gap-3 absolute text-white px-4 py-6 select-none my-4  min-w-48  mr-4 right-0  ">
+
+                    <span>
+                        Welcome, <span class="font-semibold">
+                            <%= user.name %>
+                        </span>
+                    </span>
+                    <span>
+                        Role: <span id="userRole" class="font-semibold">
+                            <%= user.role %>
+                        </span>
+                    </span>
+
+                    <a class="block hover:underline" href="/profile">Profile</a>
+                    <a tabindex="0" class="bx--btn bx--btn--secondary" href="/signout"> Sign Out </a>
+                </div> -->
+            </details>
+        </div>
+    </div>
+    <style>
+        details>summary {
+            list-style-type: none;
+        }
+
+        details>summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details[open] summary~* {
+            animation: sweep .1s ease-in-out;
+        }
+
+
+        @keyframes sweep {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px)
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0)
+            }
+        }
+    </style>
+
+    <script>
+
+
+
+
+        function beautifyUserRole() {
+            try {
+
+                const userRole = document.getElementById('userRole');
+                const beautifiedRole = userRole.innerText.trim().split('_').map(role => role.charAt(0).toUpperCase() + role.slice(1)).join(' ');
+                userRole.innerText = beautifiedRole;
+                return beautifiedRole;
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+
+        const role = `<%= user.role %>`;
+
+        const projectManagerNavItems = [
+            {
+                title: 'Dashboard',
+                href: '/project_manager/dashboard',
+                children: []
+            },
+            {
+                title: 'Projects',
+                href: '/project_manager/projects',
+                children: [
+                    {
+                        title: 'Create Project',
+                        href: '/project_manager/projects/create'
+                    },
+                    {
+                        title: 'On-going Projects',
+                        href: '/project_manager/projects/?status=ACTIVE'
+                    },
+                    {
+                        title: 'View All Projects',
+                        href: '/project_manager/projects/'
+                    },
+
+                ]
+            },
+            {
+                title: 'Reporting',
+                href: '/project_manager/reporting',
+                children: [
+                    {
+                        title: 'Pending Review',
+                        href: '/project_manager/reporting/?status=REVIEWING'
+                    },
+                    {
+                        title: 'All Reports',
+                        href: '/project_manager/reporting/'
+                    },
+                ]
+            }
+
+        ]
+
+        const singleLinkTemplate = `<li class="mr-4">
+            <a href="/project_manager/dashboard" class="hover:underline">Dashboard</a>
+        </li>`
+
+        function closeAllDetailSummaryOnOutsideClick() {
+
+            const details = [...document.querySelectorAll('details')];
+            document.addEventListener('click', function (e) {
+                if (!details.some(f => f.contains(e.target))) {
+                    details.forEach(f => f.removeAttribute('open'));
+                } else {
+                    details.forEach(f => !f.contains(e.target) ? f.removeAttribute('open') : '');
+                }
+            })
+            console.log(role);
+        }
+
+        function setupNavItems() {
+            const navUl = document.getElementById('navUl');
+            let navItemsInnerHTML = '';
+            if (role === 'PROJECT_MANAGER') {
+                projectManagerNavItems.forEach(navItem => {
+
+                    if (navItem.children.length > 0) {
+                        navItemsInnerHTML += `<li class="mr-4">
+                        <details class="transition-all">
+                            <summary >
+                                ${navItem.title}
+                            </summary>
+                            <div class="absolute min-w-32 my-4 pt-0.5 h-auto bg-black  ">
+                                ${navItem.children.map(child => `<li class="mr-4 p-2 bg-red-300 hover:bg-red-500 w-full h-auto">
+                                    <a href="${child.href}" class="hover:underline">${child.title}</a>
+                                </li>`).join('')}
+                            </div>
+                        </details>
+                    </li>`
+                    } else {
+                        navItemsInnerHTML += `<li class="mr-4">
+                        <a href="${navItem.href}" class="hover:underline">${navItem.title}</a>
+                    </li>`
+                    }
+                });
+            } else if (role === 'Team Member') {
+            }
+            console.log("innerHtml", navItemsInnerHTML);
+
+            navUl.innerHTML = navItemsInnerHTML;
+        }
+
+        beautifyUserRole();
+        setupNavItems();
+        closeAllDetailSummaryOnOutsideClick();
+
+    </script>
+</header>
