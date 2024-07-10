@@ -18,3 +18,4 @@ export function sanitizedGotoUrl(url: string | undefined): string {
     return url
 
 }
+

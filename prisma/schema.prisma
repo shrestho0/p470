@@ -27,6 +27,9 @@ model User {
   updatedAt DateTime @updatedAt
   Task      Task[]
 
+  ProjectOwned    Project[] @relation("OwnedProjects")
+  ProjectAssigned Project[] @relation("AssignedProjects")
+
   @@index([email])
   @@index([role])
 }
@@ -45,13 +48,18 @@ model Project {
 
   milestones Milestone[]
 
+  managerId String
+  manager   User   @relation("OwnedProjects", fields: [managerId], references: [id])
+
+  members User[] @relation("AssignedProjects")
+
   status ProjectStatus @default(ACTIVE)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  // @@index([summary])
-  Task      Task[]
-  Report    Report[]
+
+  Task   Task[]
+  Report Report[]
 
   @@index([id])
   @@index([title])

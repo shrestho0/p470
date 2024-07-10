@@ -10,6 +10,11 @@ const projectManagerController = ProjectManagerController.getInstance();
 
 projectManagerRouter.get('/dashboard', projectManagerController.dashboard)
 
+projectManagerRouter.get('/projects/create', projectManagerController.createProject)
+
+projectManagerRouter.get('/get-members', projectManagerController.getTeamMembers)
+
+
 
 export {
     projectManagerRouter

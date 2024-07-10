@@ -81,3 +81,8 @@ npm run dev # watch mode
     ├── services        # services directory
     └── views           # views directory
 ```
+
+## Resources
+- Carbon Design System - https://github.com/carbon-design-system/carbon
+
+## References

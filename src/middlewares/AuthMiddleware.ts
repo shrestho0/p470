@@ -76,7 +76,7 @@ export async function AuthMiddleware(req: Request, res: Response, next: NextFunc
         delete context.user.password;
         delete context.user.iat;
     }
-    console.log("Context", context)
+    // console.log("Context", context)
     req.body.user = context.user as Partial<Prisma.UserCreateInput>;
     req.body.flash_message = context.message;
 
