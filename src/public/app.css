@@ -23,3 +23,45 @@
 .border-primary{
     border-color: var(--primary) !important;
 }
+
+.header-ul-detail-panel {
+    -webkit-transition-timing-function: cubic-bezier(0.2, 0, 1, 0.9);
+    transition-timing-function: cubic-bezier(0.2, 0, 1, 0.9);
+    position: fixed;
+    z-index: 8000;
+    top: 5rem;
+    width: 16rem;
+    padding: 0.5rem;
+    overflow: hidden;
+
+    border-right: 1px solid #393939;
+    border-left: 1px solid #393939;
+    /* border: none;
+      border-right-color: currentcolor;
+      border-right-style: none;
+      border-right-width: medium;
+      border-left-color: currentcolor;
+      border-left-style: none;
+      border-left-width: medium; */
+    background-color: #161616;
+    color: #c6c6c6;
+    -webkit-transition: width 0.11s;
+    transition: width 0.11s;
+    will-change: width;
+  }
+ 
+  .header-ul-detail-panel li {
+    padding: 0.5rem;
+    border-bottom: 1px solid #393939;
+    cursor: pointer;
+  }
+
+  .create-project-section .bx--form-item .bx--label {
+    font-size:1rem;
+    padding-top:1rem;
+    padding-bottom: 5px;
+  }
+
+  .bx--data-table tr {
+    height: auto!important;
+}

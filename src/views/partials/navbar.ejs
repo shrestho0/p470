@@ -15,9 +15,26 @@
             <span class="text-lg font-semibold">Project Management Tool</span>
         </a>
         <nav class="flex items-center gap-6 justify-center flex-1 w-full  pr-16">
-            <ul class="flex select-none" id="navUl">
 
-            </ul>
+            <!-- 
+            <ul class="flex select-none" id="">
+
+                <li class="mr-4">
+                    <details class="  ">
+                        <summary>
+                            Parent
+                        </summary>
+                        <div class="header-ul-detail-panel   ">
+                <li class="mr-4 p-2  w-full h-auto">
+                    <a href="/" class="hover:underline">Child 1</a>
+                </li>
+    </div>
+    </details>
+    </li>
+    </ul> -->
+
+
+            <ul class="flex select-none" id="navUl"></ul>
 
         </nav>
 
@@ -64,23 +81,6 @@
                         <a tabindex="0" class="bx--btn bx--btn--secondary" href="/signout"> Sign Out </a>
                     </div>
                 </div>
-                <!-- <div
-                    class="bg-black flex flex-col gap-3 absolute text-white px-4 py-6 select-none my-4  min-w-48  mr-4 right-0  ">
-
-                    <span>
-                        Welcome, <span class="font-semibold">
-                            <%= user.name %>
-                        </span>
-                    </span>
-                    <span>
-                        Role: <span id="userRole" class="font-semibold">
-                            <%= user.role %>
-                        </span>
-                    </span>
-
-                    <a class="block hover:underline" href="/profile">Profile</a>
-                    <a tabindex="0" class="bx--btn bx--btn--secondary" href="/signout"> Sign Out </a>
-                </div> -->
             </details>
         </div>
     </div>
@@ -189,7 +189,10 @@
             })
             console.log(role);
         }
-
+        /**
+         * 
+         * bx--header-panel bx--header-panel--expanded top-20 p-2 
+         */
         function setupNavItems() {
             const navUl = document.getElementById('navUl');
             let navItemsInnerHTML = '';
@@ -202,8 +205,8 @@
                             <summary >
                                 ${navItem.title}
                             </summary>
-                            <div class="absolute min-w-32 my-4 pt-0.5 h-auto bg-black  ">
-                                ${navItem.children.map(child => `<li class="mr-4 p-2 bg-red-300 hover:bg-red-500 w-full h-auto">
+                            <div class="header-ul-detail-panel  ">
+                                ${navItem.children.map(child => `<li class="">
                                     <a href="${child.href}" class="hover:underline">${child.title}</a>
                                 </li>`).join('')}
                             </div>
