@@ -1,0 +1,24 @@
+<%- include('../../partials/header.ejs') %>
+
+<!-- Check if project is defined -->
+<% if (typeof project !== 'undefined') { %>
+<h1><%= project.name %></h1>
+<div class="flex items-center justify-between">
+  <div>
+    <p><%= project.description %></p>
+    <p><%= project.status %></p>
+    <p><%= project.startDate %></p>
+    <p><%= project.endDate %></p>
+  </div>
+  <div>
+    <a href="/projects/<%= project.id %>/edit" class="bx--btn bx--btn--primary">Edit</a>
+    <a href="/projects/<%= project.id %>/delete" class="bx--btn bx--btn--danger">Delete</a>
+  </div>
+</div>
+
+<% } else { %>
+
+<h1>Project Not Found</h1>
+<% } %>
+
+<%- include('../../partials/footer.ejs') %>

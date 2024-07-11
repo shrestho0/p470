@@ -1,0 +1,460 @@
+<%- include('../../partials/header.ejs') %>
+
+<section class="create-project-section">
+
+  <h1 class="text-2xl">Create New Project</h1>
+
+  <form id="create-project-form" class="bx--form py-3 " method="post">
+    <div class="grid grid-cols-2 gap-6  ">
+      <div class="left">
+
+        <input id="project-members-input" type="hidden" Xname="project-members">
+        <input id="project-milestones" type="hidden" name="project-milestones">
+
+        <!-- input field for project name-->
+        <div class="bx--form-item">
+          <label for="project-title" class="bx--label">Project Title</label>
+          <input required name="project-title" type="text" class="bx--text-input" placeholder="Enter project title">
+        </div>
+        <!-- input field for project summary -->
+        <div class="bx--form-item">
+          <label for="project-summary" class="bx--label">Project Summary</label>
+          <textarea name="project-summary" class="bx--text-area" placeholder="Enter project summary"></textarea>
+        </div>
+
+        <!-- input field for project description-->
+        <div class="bx--form-item">
+          <label for="project-description" class="bx--label">Project Description</label>
+          <textarea required name="project-description" rows="8" class="bx--text-area" placeholder="Enter project description"></textarea>
+        </div>
+
+        <!-- start date end date for milestones -->
+        <div class=" text-[1rem] text-[#525252] pt-[1rem] pb-[5px] ">Milestones
+
+          <span>
+            <button type="button" onclick="addNewMilestone()">
+              Add MileStone
+            </button>
+          </span>
+
+        </div>
+        <div class="flex flex-col gap-4" id="milestone-div">
+        </div>
+
+
+      </div>
+      <div class="right ">
+        <div class="bx--data-table-container">
+          <section aria-label="data table" class="bx--table-toolbar bx--table-toolbar bg-transparent" style="z-index: 1; overflow: inherit;">
+            <div class=" text-[1rem] text-[#525252]  ">Members</div>
+          </section>
+
+          <div>
+
+
+            <div class=" text-[1rem] text-[#525252]  ">Selected project members</div>
+            <table class="bx--data-table bx--data-table--sticky-header" style="">
+              <thead>
+                <tr>
+                  <th scope="col">
+                    <div class="bx--table-header-label">Name </div>
+                  </th>
+                  <th scope="col" data-header="protocol">
+                    <div class="bx--table-header-label">Title </div>
+                  </th>
+                  <th scope="col">
+                    <div class="bx--table-header-label">Current Projects</div>
+                  </th>
+                  <th scope="col  ">
+                    <div class="bx--table-header-label">Actions</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody aria-live="polite" id="project-members-table"></tbody>
+            </table>
+          </div>
+
+          <div class="py-3">
+
+
+            <div class=" text-[1rem] text-[#525252]  ">Find and select members</div>
+            <div class="bx--form-item py-2">
+              <input id="search" type="text" class="bx--text-input" placeholder="Search for team members">
+            </div>
+
+
+            <table class="bx--data-table bx--data-table--sticky-header" style="">
+              <thead>
+                <tr>
+                  <th scope="col">
+                    <div class="bx--table-header-label">Name </div>
+                  </th>
+                  <th scope="col" data-header="protocol">
+                    <div class="bx--table-header-label">Title </div>
+                  </th>
+                  <th scope="col">
+                    <div class="bx--table-header-label">Current Projects</div>
+                  </th>
+                  <th scope="col  ">
+                    <div class="bx--table-header-label">Actions</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody aria-live="polite" id="users-table"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+      <button type="submit" onclick="handleFormSubmission()" tabindex="0" class=" w-full h-10 bx--btn--primary max-w-full  "> Create Project </button>
+    </div>
+  </form>
+</section>
+
+<script>
+  const projectMembersTable = document.getElementById("project-members-table");
+  const usersTable = document.getElementById("users-table");
+  const searchInput = document.getElementById("search");
+  const projectMembersInput = document.getElementById("project-members-input");
+  const projectMilestonesInput = document.getElementById("project-milestones");
+  const createProjectForm = document.getElementById("create-project-form");
+  const milestoneDiv = document.getElementById("milestone-div")
+
+  const mileStoneHtml = `
+                    <div class="flex gap-4 bg-[#f4f4f4] py-2 px-4">
+                        <h2 style=" font-size:60px" class="">  {{NUMBER}} </h2> 
+                        <div class="bx--form-item ">
+                            <label for="start-date" class="bx--label">Start Date</label>
+                            <input required onchange="handleOnDateInputsChange({{NUMBER}}, 'start')"  id="{{NAME}}-{{NUMBER}}-start" type="date" class="bx--date-picker" value="{{START_DATE}}">
+                        </div>
+                        <div class="bx--form-item">
+                            <label for="end-date" class="bx--label">End Date</label>
+                            <input required onchange="handleOnDateInputsChange({{NUMBER}}, 'end')" value="{{END_DATE}}" id="{{NAME}}-{{NUMBER}}-end" type="date" class="bx--date-picker">
+                        </div>
+                        <button type="button" style=" font-size:40px" class="" onclick={removeMilestone({{NUMBER}})}> 
+                            X    
+                        </h2> 
+
+                    </div>
+
+        `
+
+  // Reactivity Stuff
+  const QueryProxy = new Proxy({
+    query: "",
+    page: 1,
+    limit: 10,
+    allocate: 0,
+    increament: 0,
+  }, {
+    set: async function(target, key, value) {
+      target[key] = value;
+      console.log("Key: ", key, "Value: ", value);
+      if (key === "allocate") {
+
+        usersTable.innerHTML = loadingCircle;
+
+        const data = await fetchUsers(QueryProxy.query, QueryProxy.page, QueryProxy.limit)
+        setTimeout(() => {
+          UserSelectionProxy.users = data.data;
+        }, 500);
+        // UserSelectionProxy.users = data.data;
+
+
+
+      } else if (key === "increament") {
+
+        usersTable.innerHTML = loadingCircle;
+
+        const data = await fetchUsers(QueryProxy.query, QueryProxy.page, QueryProxy.limit)
+
+
+        setTimeout(() => {
+          UserSelectionProxy.users = data.data;
+        }, 500);
+        // console.log("Increasing", UserSelectionProxy.users);
+      }
+
+
+
+      return true;
+    },
+  });
+
+  const UserSelectionProxy = new Proxy({
+    users: [],
+    selectedMembers: []
+  }, {
+    set: function(target, key, value) {
+      target[key] = value;
+      console.log("Key: ", key, "Value: ", value);
+      if (key === "users") {
+        renderTable(value, usersTable, "Include", "includeToProject");
+      }
+      if (key === "selectedMembers") {
+
+        let selectedIds = [];
+        if (value) {
+          for (let index = 0; index < value.length; index++) {
+            const element = value[index];
+            selectedIds.push(element.id)
+          }
+          console.log("value")
+        }
+
+        projectMembersInput.value = JSON.stringify(selectedIds);
+        renderTable(value, projectMembersTable, "Exclude", "excludeFromProject");
+      }
+
+
+      return true;
+    }
+  });
+
+  // This will create some input elements that can be retrerived 
+  milestoneDiv.innerHTML = loadingCircle;
+  const MileStonesProxy = new Proxy({
+    milestones: []
+  }, {
+    set: function(target, key, value) {
+      // We'll spread everytime
+      console.log("milestone added", value)
+
+      // save input values to the objects
+
+      if (target.milestones.length > 0) {
+        target.milestones.forEach((milestone, index) => {
+          const start = document.getElementById(`milestone-${index + 1}-start`)
+          // console.log("start", start);
+          const end = document.getElementById(`milestone-${index + 1}-end`)
+
+          const start_date = start.value
+          const end_date = end.value
+
+          target.milestones[index].start = start.value
+          target.milestones[index].end = end.value
+
+        });
+      } else {
+        console.log("No milestones")
+      }
+
+      target[key] = value;
+
+
+
+
+      renderMilestones(target.milestones)
+
+      projectMilestonesInput.value = JSON.stringify(target.milestones);
+
+      return true;
+    }
+  });
+  addNewMilestone()
+  renderMilestones(MileStonesProxy.milestones)
+
+
+  function handleOnDateInputsChange(number, from) {
+    console.log("Date changed", number)
+    const start = document.getElementById(`milestone-${number}-start`)
+    const end = document.getElementById(`milestone-${number}-end`)
+
+    // start date should be less than or equal to the end date
+    if (start.value === "" || end.value === "") return
+
+    if (start.value > end.value) {
+      alert("Start date should be less than or equal to the end date")
+      if (from === "start") start.value = ""
+      if (from === "end") end.value = ""
+      return
+    }
+
+
+    const start_date = start.value
+    const end_date = end.value
+
+    MileStonesProxy.milestones[number - 1].start = start_date
+    MileStonesProxy.milestones[number - 1].end = end_date
+
+    projectMilestonesInput.value = JSON.stringify(MileStonesProxy.milestones);
+
+    console.log("MilestonesX", MileStonesProxy.milestones)
+
+
+
+
+  }
+
+  function renderMilestones(milestones) {
+
+    let html = ""
+    milestones.forEach((milestone, index) => {
+      let newHtml = mileStoneHtml.replace(/{{NUMBER}}/g, index + 1)
+      newHtml = newHtml.replace(/{{NAME}}/g, "milestone")
+      newHtml = newHtml.replace(/{{START_DATE}}/g, milestone.start)
+      newHtml = newHtml.replace(/{{END_DATE}}/g, milestone.end)
+      html += newHtml
+    });
+    milestoneDiv.innerHTML = html
+  }
+
+
+  function renderTable(list, table, buttonName, funcName) {
+    table.innerHTML = "";
+
+    if (list.length === 0) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+                    <td colspan="4" class="text-center w-full py-2">No team members found</td>
+                `;
+      table.appendChild(tr);
+      return;
+    }
+    list.forEach(member => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+                    <td>${member.name}</td>
+                    <td>${member.teamMemberTitle}</td>
+                    <td>${member.projectCount}</td>
+                    <td class="">
+                        <button type="button" onclick="${funcName}('${member.id}')" class="bx--btn bx --btn--secondary w-full h-full bx--btn--sm ">${buttonName}</button> 
+                    </td>
+                `;
+      table.appendChild(tr);
+    });
+  }
+
+  // Utilities
+
+  async function fetchUsers(query, page, limit) {
+    return fetch(`/project_manager/get-members?q=${query}&page=${page}&limit=${limit}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    }).then(res => res.json()).catch(err => console.log(err));
+  }
+
+  (async function initiate() {
+    QueryProxy.query = "";
+    QueryProxy.page = 1;
+    QueryProxy.limit = 10;
+    QueryProxy.allocate++;
+    QueryProxy.increament++;
+  })()
+
+  function listenToSearchInput(e) {
+    QueryProxy.query = e.target.value;
+    QueryProxy.page = 1;
+    QueryProxy.limit = 10;
+    QueryProxy.allocate++;
+  }
+  searchInput.addEventListener("input", listenToSearchInput);
+
+  function includeToProject(id) {
+    console.log("Include to project", id);
+    const member = UserSelectionProxy.users.find(user => user.id === id);
+    UserSelectionProxy.users = UserSelectionProxy.users.filter(user => user.id !== id);
+    UserSelectionProxy.selectedMembers = [...UserSelectionProxy.selectedMembers, member];
+  }
+
+  function excludeFromProject(id) {
+    console.log("Exclude from project", id);
+    const member = UserSelectionProxy.selectedMembers.find(user => user.id === id);
+    UserSelectionProxy.selectedMembers = UserSelectionProxy.selectedMembers.filter(user => user.id !== id);
+    UserSelectionProxy.users = [...UserSelectionProxy.users, member];
+  }
+
+
+
+  function addNewMilestone() {
+    const milestone_number = MileStonesProxy.milestones.length + 1
+    const obj = {
+      start: '',
+      end: '',
+    }
+    MileStonesProxy.milestones = [...MileStonesProxy.milestones, obj]
+  }
+
+  function removeMilestone(number) {
+    if (MileStonesProxy.milestones.length < 2) {
+      alert("You can't remove the last milestone")
+      return
+    }
+
+    MileStonesProxy.milestones = MileStonesProxy.milestones.filter((_, idx) => idx + 1 !== number)
+  }
+
+
+  // function changeWindow(loc) {
+  //   // window.open(loc, "_self")
+
+  // }
+
+  async function createProjectAjax(data) {
+    const res = await fetch("/project_manager/projects/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...data,
+        members: UserSelectionProxy.selectedMembers.map(member => member.id)
+      })
+    }).then(res => res.json()).catch(err => console.log(err));
+
+    // console.log("res", res);
+
+
+    if (res.success) {
+
+      const loc = `/project_manager/projects/${res?.data?.id}/assign-task`
+      console.log("res success", loc);
+
+      window.open(loc, "_self")
+
+
+    } else {
+      showFlashMessage(res?.message)
+    }
+
+  }
+
+  function handleFormSubmission() {
+    // This is unnecessary, but, handles the form submission
+    createProjectForm.addEventListener("submit", async (e) => {
+      e.preventDefault()
+
+      // validate milestones 
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      // console.log("Form submitted", data);
+
+      // check milestones
+      let stop = false
+      for (let index = 1; index < MileStonesProxy.milestones.length; index++) {
+        const element = MileStonesProxy.milestones[index];
+        const previousElement = MileStonesProxy.milestones[index - 1]
+
+        if (element.start === "" || previousElement.end === "") continue
+
+        if (element.start < previousElement.end) {
+          stop = true
+          alert(`Milestone: ${index + 1} start date must be greater than or equals to the Milestone: ${index} end date`)
+          return
+        }
+      }
+
+      if (!stop) {
+        await createProjectAjax(data)
+      }
+
+    });
+    // console.log(e.target)
+    // console.log("Form submitted", createProjectForm);
+    // console.log("Form submitted", UserSelectionProxy.selectedMembers);
+
+  }
+</script>
+
+<%- include('../../partials/footer.ejs') %>

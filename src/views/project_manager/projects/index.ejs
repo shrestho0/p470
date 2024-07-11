@@ -1,0 +1,148 @@
+<!-- Projects Page -->
+<%- include('../../partials/header.ejs') %>
+
+<h1 class="text-2xl py-3">Projects </h1>
+
+<!-- projects table -->
+
+<div class="py-3">
+
+
+  <form class="grid grid-cols-4 gap-2">
+
+
+    <div class="left col-span-3">
+      <div class="filter-inputs flex gap-2 ">
+
+
+
+        <div class="bx--form-item py-2">
+          <input name="q" type="text" class="bx--text-input" placeholder="Search for project name, summary or description">
+        </div>
+
+
+        <div class="bx--form-item py-2">
+          <select name="status" id="filter" class="bx--select-input">
+            <option value="ALL">ALL</option>
+            <option value="ACTIVE"> ACTIVE </option>
+            <option value="COMPLETED">COMPLETED</option>
+            <option value="CANCELLED">CANCELLED</option>
+          </select>
+        </div>
+        <div class="bx--form-item py-2">
+          <select name="limit" id="filter" class="bx--select-input">
+            <option value="5">5</option>
+            <option value="10"> 10 </option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class=" col-span w-full flex items-center justify-center   ">
+      <button type="submit" class="bx--btn bx--btn--primary " style="min-height: 2.5rem;">Filter</button>
+      <button type="button" onclick="resetFilters()" class="bx--btn bx--btn--tertiary " style="min-height: 2.5rem;">Clear
+        Filter</button>
+    </div>
+
+  </form>
+
+  <div class="bx--data-table " style="">
+    <div class="p1 w-full">
+      <div class="header flex items-center justify-between w-full">
+        <h2 class="text-2xl">
+
+        </h2>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<% if (typeof projects !=='undefined' ) { %>
+<!-- if projects.totalItems -->
+<% if (projects.totalItems> 0 ) { %>
+
+<% projects.data.forEach(project=> { %>
+
+<!-- show projects -->
+<a href="/project_manager/projects/<%= project.id %>" class="bx--tile bx--tile--clickable" style="margin-bottom: 1rem;">
+  <div class="w-full flex items-center justify-between">
+    <div>
+      <h2 class="bx--tile__title text-xl "><%= project.title %></h2>
+      <p class="text-sm">Summary: <%= project.summary %></p>
+    </div>
+
+    <div>
+
+      <p class="bx--tile__label text-sm text-right"><%= project.status %></p>
+      <p class="bx--tile__label text-right text-sm">Deadline: <%= new Date( project.milestones[project.milestones.length-1].end).toISOString().split("T")[0] %></p>
+      <p class="bx--tile__label text-sm text-right">
+
+        <% if (project.members.length) { %>
+        <%=project.members.length %> team members
+        <% } else { %>
+        No team member
+        <% } %>
+
+      </p>
+
+
+
+    </div>
+  </div>
+
+  <div class="bx--tile__details">
+  </div>
+</a>
+
+<% }) %>
+
+<% } else { %>
+
+
+<div class="bx--empty-state">
+  <div class="bx--empty-state__body">
+    <p class="bx--empty-state__content">No projects found. Create a new project to get
+      started.
+    </p>
+    <h3 class="bx--empty-state__title">No Projects Found</h3>
+  </div>
+</div>
+<!-- else projects inside pre tag-->
+
+
+
+<% } %>
+<% } %>
+
+
+<script>
+  // populate info from query params
+  const urlParams = new URLSearchParams(window.location.search);
+  const q = urlParams.get('q');
+  const status = urlParams.get('status');
+
+  if (q) {
+    document.querySelector('input[name="q"]').value = q;
+  }
+
+  if (status) {
+    document.querySelector('select[name="status"]').value = status;
+  }
+
+
+  function resetFilters() {
+    // remove q and status
+    document.querySelector('input[name="q"]').value = '';
+    document.querySelector('select[name="status"]').value = 'ALL';
+    document.querySelector('select[name="limit"]').value = '5';
+    document.querySelector('form').submit();
+
+
+
+  }
+</script>
+
+<%- include('../../partials/footer.ejs') %>
