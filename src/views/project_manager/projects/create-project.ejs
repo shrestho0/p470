@@ -106,7 +106,7 @@
         </div>
 
       </div>
-      <button type="submit" onclick="handleFormSubmission()" tabindex="0" class=" w-full h-10 bx--btn--primary max-w-full  "> Create Project </button>
+      <button type="submit" onclick="handleFormSubmissionButtonClick()" tabindex="0" class=" w-full h-10 bx--btn--primary max-w-full  "> Create Project </button>
     </div>
   </form>
 </section>
@@ -125,11 +125,11 @@
                         <h2 style=" font-size:60px" class="">  {{NUMBER}} </h2> 
                         <div class="bx--form-item ">
                             <label for="start-date" class="bx--label">Start Date</label>
-                            <input required onchange="handleOnDateInputsChange({{NUMBER}}, 'start')"  id="{{NAME}}-{{NUMBER}}-start" type="date" class="bx--date-picker" value="{{START_DATE}}">
+                            <input required onchange="handleOnDateInputsChange({{NUMBER}}, 'start')"  id="{{NAME}}-{{NUMBER}}-start" type="date" class="bx--date-picker__input" value="{{START_DATE}}">
                         </div>
                         <div class="bx--form-item">
                             <label for="end-date" class="bx--label">End Date</label>
-                            <input required onchange="handleOnDateInputsChange({{NUMBER}}, 'end')" value="{{END_DATE}}" id="{{NAME}}-{{NUMBER}}-end" type="date" class="bx--date-picker">
+                            <input required onchange="handleOnDateInputsChange({{NUMBER}}, 'end')" value="{{END_DATE}}" id="{{NAME}}-{{NUMBER}}-end" type="date" class="bx--date-picker__input">
                         </div>
                         <button type="button" style=" font-size:40px" class="" onclick={removeMilestone({{NUMBER}})}> 
                             X    
@@ -392,7 +392,7 @@
 
   // }
 
-  async function createProjectAjax(data) {
+  async function sendDataToServer(data) {
     const res = await fetch("/project_manager/projects/create", {
       method: "POST",
       headers: {
@@ -421,7 +421,7 @@
 
   }
 
-  function handleFormSubmission() {
+  function handleFormSubmissionButtonClick() {
     // This is unnecessary, but, handles the form submission
     createProjectForm.addEventListener("submit", async (e) => {
       e.preventDefault()
@@ -446,7 +446,7 @@
       }
 
       if (!stop) {
-        await createProjectAjax(data)
+        await sendDataToServer(data)
       }
 
     });

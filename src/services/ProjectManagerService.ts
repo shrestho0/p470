@@ -171,13 +171,12 @@ export class ProjectManagerService {
         return theProjectWithPagination;
     }
 
-    static async getProject({ id, include = {
-        manager: false,
-        milestones: false,
-        members: false,
-    } }) {
+    static async getProject({ id, include }: {
+        id: string;
+        include: Prisma.ProjectInclude
+    }) {
         try {
-            const project = await db.project.findFirst({
+            const project = await db.project.findUnique({
                 where: { id },
                 include
             })
@@ -188,6 +187,43 @@ export class ProjectManagerService {
     }
 
 
+    static async createTask(tData: Prisma.TaskCreateInput) {
+        try {
+            const task = await db.task.create({
+                data: tData
+            })
+            return task
+        } catch (e) {
+            console.log(e)
+
+        }
+        return null
+    }
+
+    static async getTasksByProjectId(projectId: string) {
+        let tasks = null;
+
+        try {
+            tasks = await db.task.findMany({ where: { projectId } })
+            console.log(tasks, "found")
+        } catch (e) {
+
+        }
+        return tasks
+    }
+
+    static async getTask({ id, include }: { id: string; include: Prisma.TaskInclude }) {
+        try {
+
+            const task = await db.task.findUnique({
+                where: { id }, include
+            })
+            return task
+        } catch (e) {
+            console.log(e)
+        }
+        return null
+    }
 
 
 }

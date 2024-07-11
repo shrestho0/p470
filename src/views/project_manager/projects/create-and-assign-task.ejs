@@ -1,0 +1,160 @@
+<%- include('../../partials/header.ejs') %>
+
+<!--check if project is defined -->
+
+<% if(typeof project != "undefined") { %>
+
+
+<h2 class="text-2xl py-3">
+  Assign task <%= project.title %> project
+</h2>
+
+<form id="createProjectForm" class="bx--form py-3 flex flex-col gap-3 " method="post">
+  <div class="bx--form-item">
+    <label for="title" class="bx--label">Title</label>
+    <input type="text" id="title" name="title" placeholder="Task title" class="bx--text-input" required>
+  </div>
+  <div class="bx--form-item">
+    <label for="description" class="bx--label">Description</label>
+    <textarea id="description" placeholder="Task Description" name="description" class="bx--text-area" required></textarea>
+  </div>
+
+  <!--milestones-->
+  <div class="bx--form-item">
+    <label for="milestone" class="bx--label">Milestone</label>
+    <select id="milestone" name="milestone" class="bx--select-input" required>
+      <option value="">Select Milestone</option>
+      <% project.milestones.forEach(milestone => { %>
+      <option value="<%= JSON.stringify(milestone) %>">Milestone: <%= milestone.number %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="bx--form-item">
+    <label for="due_date" class="bx--label">Due Date</label>
+    <input type="date" id="due_date" name="due_date" class="bx--date-picker__input " required>
+  </div>
+  <div class="bx--form-item">
+    <label for="priority" class="bx--label">Priority</label>
+    <select id="priority" name="priority" class="bx--select-input" required>
+      <option value="URGENT">URGENT</option>
+      <option value="HIGH">HIGH</option>
+      <option value="MEDIUM" selected>MEDIUM</option>
+      <option value="LOW">LOW</option>
+    </select>
+  </div>
+
+
+  <div class="bx--form-item">
+    <label for="assignee" class="bx--label">Assignee</label>
+    <select id="assignee" name="assignee" class="bx--select-input" required>
+      <option value="">Select Assignee</option>
+      <% project.members.forEach(user => { %>
+      <option value="<%= user.id %>"><%= user.name %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="bx--form-item">
+    <button id="create-task-submit-button" type="submit" class="bx--btn bx--btn--primary">Create and Assign Task</button>
+  </div>
+</form>
+
+
+
+
+
+<% } else { %>
+<div class="bx--empty-state">
+  <div class="bx--empty-state__body">
+    <h3 class="bx--empty-state__title">No Project Found</h3>
+  </div>
+</div>
+<% } %>
+
+
+<script>
+  const createProjectForm = document.getElementById('createProjectForm');
+  const milestone = document.getElementById('milestone');
+  const due_date = document.getElementById('due_date');
+  const createTaskSubmitButton = document.getElementById('create-task-submit-button');
+
+  createProjectForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fData = new FormData(e.target)
+    // set milestone number on milestone
+    if (fData.get('milestone')) {
+      try {
+        fData.set('milestone', JSON.parse(fData.get('milestone')).number);
+      } catch (e) {
+        // console.log("Error", e);
+      }
+    }
+    // const milestone_data = JSON.parse(milestone.value);
+
+    const data = structuredClone(Object.fromEntries(fData.entries()));
+
+
+
+
+    console.log("Data", data);
+    const res = await fetch(``, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }).then(res => res.json()).then(data => {
+      console.log("Data", data);
+      if (data.success) {
+        console.log("data fetched", data);
+
+        window.location.href = `/project_manager/projects/${projectId}/tasks`;
+      }
+    });
+    // const {
+    //   title,
+    //   description,
+    //   milestone,
+    //   due_date,
+    //   priority,
+    //   assignee
+    // } = data;
+
+    console.log("title", title);
+
+
+    // await sendDataToBackend(data);
+  });
+
+  const projectId = "<%= project.id %>";
+
+  milestone.addEventListener('change', (e) => {
+    if (!milestone.value) {
+      return
+    };
+    due_date.style.display = "block";
+    const milestone_data = JSON.parse(milestone.value);
+
+    due_date.min = new Date(milestone_data.start).toISOString().split('T')[0];
+    due_date.max = new Date(milestone_data.end).toISOString().split('T')[0];
+
+  });
+
+
+  // async function sendDataToBackend(dataX) {
+  //   console.log("Data  to send", dataX);
+  //   console.log("Project ID", projectId);
+
+
+  // }
+
+
+
+
+  // due_date.addEventListener('change', (e) => {
+  //   alertOnInvalidDateSelect("due_date");
+  // });
+</script>
+
+
+<%- include('../../partials/footer.ejs') %>

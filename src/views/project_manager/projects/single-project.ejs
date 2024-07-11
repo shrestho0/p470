@@ -11,10 +11,18 @@
     <p><%= project.endDate %></p>
   </div>
   <div>
-    <a href="/projects/<%= project.id %>/edit" class="bx--btn bx--btn--primary">Edit</a>
-    <a href="/projects/<%= project.id %>/delete" class="bx--btn bx--btn--danger">Delete</a>
+    <a href="/project_manager/projects/<%= project.id %>/tasks" class="bx--btn bx--btn--primary">Task List</a>
+    <a href="/project_manager/projects/<%= project.id %>/assign-task" class="bx--btn bx--btn--primary">Assign Task</a>
+    <a href="/project_manager/projects/<%= project.id %>/edit" class="bx--btn bx--btn--primary">Edit</a>
+    <a href="/project_manager/projects/<%= project.id %>/delete" class="bx--btn bx--btn--danger">Delete</a>
   </div>
 </div>
+
+
+<pre>
+  <%= JSON.stringify(project, null, 2) %>
+</pre>
+
 
 <% } else { %>
 

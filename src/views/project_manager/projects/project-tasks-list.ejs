@@ -1,0 +1,55 @@
+<%- include('../../partials/header.ejs') %>
+
+
+<h2 class="text-2xl py-3">Project Task List</h2>
+
+
+<% if (typeof tasks === "undefined") { %>
+<p>[DEBUG] Task Undefined. After being ensured, we'll remove this part</p>
+<% } else if (tasks === null) { %>
+<p>[DEBUG] Null, maybe, not task found.Task Undefined or null.</p>
+
+<% } else if (tasks.length === 0) { %>
+<p>No tasks found.</p>
+<% } else { %>
+
+
+
+<% tasks.forEach(task=> { %>
+
+<!-- show projects -->
+<a href="./tasks/<%= task.id %>" class="bx--tile bx--tile--clickable" style="margin-bottom: 1rem;">
+  <div class="w-full flex items-center justify-between">
+    <div>
+      <h2 class="bx--tile__title text-xl "><%= task.title %></h2>
+    </div>
+
+    <div>
+
+      <p class="bx--tile__label text-sm text-right"><%= task.status %></p>
+      <p class="bx--tile__label text-right text-sm">Deadline: <%= new Date(task.due_date).toISOString().split("T")[0] %></p>
+      <p class="bx--tile__label text-sm text-right">
+
+      </p>
+
+
+
+    </div>
+  </div>
+
+  <div class="bx--tile__details">
+  </div>
+</a>
+
+<% }) %>
+
+
+
+
+<% } %>
+
+
+
+
+
+<%- include('../../partials/footer.ejs') %>

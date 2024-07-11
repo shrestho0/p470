@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { customResponse } from "../utils/custom-response";
 import { ProjectManagerService } from "../services/ProjectManagerService";
-import { Prisma } from "@prisma/client";
+import { $Enums, Prisma } from "@prisma/client";
 
 export class ProjectManagerController {
     private static instance: ProjectManagerController;
@@ -84,22 +84,6 @@ export class ProjectManagerController {
     }
 
 
-    async getProject(req: Request, res: Response) {
-        const id = req.params.id as string
-        if (id) {
-            const project = await ProjectManagerService.getProject({
-                id,
-                include: {
-                    manager: true,
-                    milestones: true,
-                    members: true
-                }
-            });
-            return customResponse({ req, res, view: 'project_manager/projects/single-project', data: { title: project.title, project } })
-        }
-
-        return customResponse({ req, res, view: 'project_manager/projects/single-project', data: { title: 'Project' } })
-    }
 
     async getProjects(req: Request, res: Response) {
         const managerId = req.body.user.id;
@@ -119,10 +103,184 @@ export class ProjectManagerController {
         return customResponse({ req, res, view: 'project_manager/projects/index', data: { title: 'Projects', projects } })
     }
 
+
+    async getProject(req: Request, res: Response) {
+        const id = req.params.id as string
+        if (id) {
+            const project = await ProjectManagerService.getProject({
+                id,
+                include: {
+                    manager: true,
+                    milestones: true,
+                    members: true,
+                    tasks: true,
+                    _count: true
+                }
+            });
+
+            if (project) {
+                project?.members?.length &&
+                    project.members.forEach((member) => {
+                        delete member.password
+                    })
+
+                project?.manager?.id && delete project.manager.password
+            }
+
+            return customResponse({ req, res, view: 'project_manager/projects/single-project', data: { title: project.title, project } })
+        }
+
+        return customResponse({ req, res, view: 'project_manager/projects/single-project', data: { title: 'Project' } })
+    }
+
+    async createTaskJSON(req: Request, res: Response) {
+        const projectId = req.params.id as string;
+        console.log("Assign Task Post", req.body);
+        try {
+
+            const {
+                title,
+                description,
+                milestone,
+                due_date,
+                priority,
+                assignee,
+            } = req.body;
+
+
+            const tData: Prisma.TaskCreateInput = {
+                title: "",
+                project: {
+                    connect: {
+                        id: projectId
+                    },
+
+                }
+            }
+
+            if (title) tData.title = title;
+            if (description) tData.description = description;
+            if (milestone) tData.milestoneNo = parseInt(milestone ?? "0") ? 0 : null;
+            if (due_date) tData.due_date = new Date(due_date);
+            if (priority) tData.priority = priority as $Enums.Priority;
+            if (assignee) tData.assignee = {
+                connect: {
+                    id: assignee
+                }
+            }
+
+
+
+
+            const task = await ProjectManagerService.createTask(tData)
+
+            return res.json({ success: true, message: 'Task assigned successfully', task });
+        } catch (e) {
+            return res.json({ success: false, message: 'Error assigning task' });
+        }
+    }
+
+    async assignTask(req: Request, res: Response) {
+        const context = {
+            title: 'Assign Task',
+            project: null,
+        }
+
+        const id = req.params.id as string
+
+        try {
+            const project = await ProjectManagerService.getProject({
+                id,
+                include: {
+                    manager: true,
+                    milestones: true,
+                    members: true
+                }
+            });
+            context.project = project;
+        } catch (e) {
+            context.title = 'Assign task | Error';
+        }
+
+
+        return customResponse({ req, res, view: 'project_manager/projects/create-and-assign-task', data: context })
+    }
+
+
+
     editProject(req: Request, res: Response) {
         throw new Error('Method not implemented.');
     }
     deleteProject(req: Request, res: Response) {
         throw new Error('Method not implemented.');
     }
+
+
+
+
+
+    /**
+     * Task Specific Stuff
+     * TODO: Fix unsorted ones. 
+     * TODO: Clean code is necessary and delete this line. 
+     */
+
+
+
+    // TODO: There can be a middleware that checks for projects/:id for all, check if id valid and return success false and message
+    // Thus, we do not need to handle from every controller or service for this specific one 
+
+    async getProjectTasks(req: Request, res: Response) {
+        // TODO: add search filtering to this
+        // TODO: send like [ tasks[], tasks[] ], separated by milestones 
+
+        const id = req.params.id
+
+        const context = {
+            tasks: null
+        }
+
+        // Get tasks project specific
+        context.tasks = await ProjectManagerService.getTasksByProjectId(id)
+
+
+        console.log("[DEBUG] getProjectTasks", context)
+
+
+        return customResponse({
+            req, res,
+            view: "project_manager/projects/project-tasks-list",
+            data: context,
+        })
+
+    }
+
+
+    async getProjectTask(req: Request, res: Response) {
+        const { taskId } = req.params
+        const context = { task: null }
+
+        context.task = await ProjectManagerService.getTask({
+            id: taskId,
+            include: {
+                project: true,
+                assignee: true,
+                reports: true,
+                _count: true
+            }
+        })
+
+        return customResponse({
+            req,
+            res,
+            view: 'project_manager/projects/single-task',
+            data: context
+        })
+
+
+
+
+    }
+
+
 }

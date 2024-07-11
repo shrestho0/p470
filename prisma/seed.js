@@ -149,6 +149,7 @@ async function main() {
         if (pm01) {
             const project = await db.project.create({
                 data: {
+                    id: "project01",
                     title: "Project One",
                     summary: "This is a summary of Project One",
                     description: "This is a description of Project One",
@@ -231,8 +232,100 @@ async function main() {
                 }
             })
 
+
+            // add tasks
+            const t1 = await db.task.createMany({
+                data: [
+                    {
+                        id: "withoutreport01",
+                        title: "Task One",
+                        description: "This is a description of Task One",
+                        priority: "HIGH",
+                        projectId: project.id,
+                        status: "ASSIGNED",
+                        due_date: new Date("2024-07-10"),
+                        assigneeId: tm01.id
+
+                    },
+                    {
+                        id: "withoutreport02",
+                        title: "Task Two",
+                        description: "This is a description of Task Two",
+                        priority: "MEDIUM",
+                        projectId: project.id,
+                        status: "ASSIGNED",
+                        due_date: new Date("2024-07-12"),
+                        assigneeId: tm02.id
+                    },
+                    {
+                        id: "withoutreport03",
+                        title: "Task Three",
+                        description: "This is a description of Task Three",
+                        priority: "LOW",
+                        projectId: project.id,
+                        status: "ASSIGNED",
+                        due_date: new Date("2024-07-14"),
+                        assigneeId: tm03.id
+                    },
+                    {
+                        id: "withreport01",
+                        title: "Task Four",
+                        description: "This is a description of Task Four",
+                        priority: "HIGH",
+                        projectId: project.id,
+                        status: "RE_ASSIGNED",
+                        due_date: new Date("2024-07-16"),
+                        assigneeId: tm01.id
+                    },
+                    {
+                        id: "withreport02",
+                        title: "Task Five",
+                        description: "This is a description of Task Five",
+                        priority: "MEDIUM",
+                        projectId: project.id,
+                        status: "ON_REVIEW",
+                        due_date: new Date("2024-07-18"),
+                        assigneeId: tm02.id
+                    },
+
+                ],
+
+            })
+
             console.log("Team Members assigned to Project One successfully.")
 
+            await db.report.createMany({
+
+                data: [
+                    {
+                        taskId: "withreport01",
+                        status: "REJECTED",
+                        comment_from_assignee: "This is a comment from assignee",
+                        comment_from_project_manager: "This is a comment from reviewer",
+
+                    },
+                    {
+                        taskId: "withreport02",
+                        status: "APPROVED",
+                        comment_from_assignee: "This is a comment from assignee",
+                        comment_from_project_manager: "This is a comment from reviewer",
+                    },
+                    {
+                        taskId: "withreport02",
+                        status: "REJECTED",
+                        comment_from_assignee: "This is a comment from assignee",
+                        comment_from_project_manager: "This is a comment from reviewer",
+
+
+                    }
+                ]
+
+
+            }
+
+            )
+
+            console.log("Report assigned")
 
         }
 

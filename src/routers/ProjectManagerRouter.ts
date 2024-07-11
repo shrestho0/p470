@@ -15,6 +15,9 @@ projectManagerRouter.post('/projects/create', projectManagerController.createPro
 projectManagerRouter.get('/projects', projectManagerController.getProjects)
 projectManagerRouter.get('/projects/:id', projectManagerController.getProject)
 projectManagerRouter.get('/projects/:id/assign-task', projectManagerController.assignTask)
+projectManagerRouter.post('/projects/:id/assign-task', projectManagerController.createTaskJSON)
+projectManagerRouter.get('/projects/:id/tasks', projectManagerController.getProjectTasks)
+projectManagerRouter.get('/projects/:id/tasks/:taskId', projectManagerController.getProjectTask)
 
 projectManagerRouter.post('/projects/:id', projectManagerController.editProject)
 projectManagerRouter.delete('/projects/:id', projectManagerController.deleteProject)

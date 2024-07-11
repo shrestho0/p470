@@ -1,0 +1,28 @@
+<%- include('../../partials/header.ejs') %>
+
+<!-- Check if task is defined -->
+<% if (typeof task !== 'undefined') { %>
+<h1><%= task.title %></h1>
+<div class="flex items-center justify-between">
+  <div>
+    <p><%= task.description %></p>
+    <p><%= task.status %></p>
+    <p><%= task.due_date %></p>
+  </div>
+  <div>
+    <a href="/task_manager/tasks/<%= task.id %>/assign-task" class="bx--btn bx--btn--primary">Assign Task</a>
+    <a href="/task_manager/tasks/<%= task.id %>/edit" class="bx--btn bx--btn--primary">Edit</a>
+    <a href="/task_manager/tasks/<%= task.id %>/delete" class="bx--btn bx--btn--danger">Delete</a>
+  </div>
+</div>
+
+<pre>
+    <%= JSON.stringify(task, null, 2) %>
+</pre>
+
+<% } else { %>
+
+<h1>task Not Found</h1>
+<% } %>
+
+<%- include('../../partials/footer.ejs') %>
